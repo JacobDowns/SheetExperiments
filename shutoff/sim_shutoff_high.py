@@ -13,10 +13,10 @@ MPI_rank = MPI.rank(mpi_comm_world())
 
 ### Load the input file 
 
-input_file = 'inputs_sheet/steady/real_high_steady.hdf5'
+input_file = '../inputs_sheet/steady/real_high_steady.hdf5'
 k_min = 5e-5
 k_max = 5e-3
-scale_functions = ScaleFunctions(input_file, k_min, k_max, u_b_max = 80.0)
+scale_functions = ScaleFunctions(input_file, k_min, k_max, u_b_max = 100.0)
 
 
 ### Setup the model
@@ -91,7 +91,7 @@ i = 0
 for to in shutoff_times:
   scale_functions.shutoff_length = to
   name = names[i]
-  model_inputs['out_dir'] = 'paper_results/real_shutoff_high/' +  name
+  model_inputs['out_dir'] = 'real_shutoff_high/' +  name
   model_inputs['checkpoint_file'] = 'shut_high_' + name
   model = SheetModel(model_inputs)
   run_sim(name)

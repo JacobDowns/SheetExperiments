@@ -1,5 +1,5 @@
 """
-Reference simulation on a trough over the winter. Large rate factor.
+Reference simulation over the winter. Large rate factor.
 """
 
 from dolfin import *
@@ -13,8 +13,8 @@ from scale_functions import *
 MPI_rank = MPI.rank(mpi_comm_world())
 
 # Scale functions for determining winter sliding speed
-input_file = 'inputs_sheet/steady/ref_trough_steady_rate.hdf5'
-scale_functions = ScaleFunctions(input_file, 5e-3, 5e-3)
+input_file = 'ref_steady_rate.hdf5'
+scale_functions = ScaleFunctions(input_file, 1e-2, 1e-2)
 
 prm = NonlinearVariationalSolver.default_parameters()
 prm['newton_solver']['relaxation_parameter'] = 1.0
@@ -27,7 +27,7 @@ model_inputs = {}
 pcs['k'] = 1e-2
 pcs['A'] = pcs['A'] * 10.0
 model_inputs['input_file'] = input_file
-model_inputs['out_dir'] = 'paper_results/out_ref_trough_winter/'
+model_inputs['out_dir'] = 'out_ref_winter_rate/'
 model_inputs['constants'] = pcs
 model_inputs['newton_params'] = prm
 
@@ -56,10 +56,10 @@ while model.t < T:
     current_time = model.t / spd
     print ('%sCurrent time: %s %s' % (fg(1), current_time, attr(0)))
   
-  model.step(dt)
+  model.step(dt) 
   
   if i % 1 == 0:
-    model.write_pvds(['pfo', 'h'])
+    model.write_pvds(['pfo', 'h', 'm', 'k'])
     
   if i % 1 == 0:
     model.checkpoint(['m', 'pfo', 'h', 'u_b', 'k'])

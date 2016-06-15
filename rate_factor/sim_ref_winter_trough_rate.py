@@ -24,6 +24,7 @@ prm['newton_solver']['error_on_nonconvergence'] = False
 prm['newton_solver']['maximum_iterations'] = 30
 
 model_inputs = {}
+pcs['k'] = 1e-2
 pcs['A'] = pcs['A'] * 10.0
 model_inputs['input_file'] = input_file
 model_inputs['out_dir'] = 'out_ref_trough_winter_rate/'
@@ -58,7 +59,7 @@ while model.t < T:
   model.step(dt)
   
   if i % 1 == 0:
-    model.write_pvds(['pfo', 'h'])
+    model.write_pvds(['pfo', 'h', 'm', 'k'])
     
   if i % 1 == 0:
     model.checkpoint(['m', 'pfo', 'h', 'u_b', 'k'])
