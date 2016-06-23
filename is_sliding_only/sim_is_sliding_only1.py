@@ -19,7 +19,7 @@ scale_functions = ScaleFunctions(input_file, 5e-3, 5e-3, u_b_max = 100.0)
 
 model_inputs = {}
 model_inputs['input_file'] = input_file
-model_inputs['out_dir'] = 'out_is_sliding_only/'
+model_inputs['out_dir'] = 'out_is_sliding_only1/'
 model_inputs['constants'] = pcs
 model_inputs['opt_params'] = {'tol' : 5e-3, 'scale' : 30}
 

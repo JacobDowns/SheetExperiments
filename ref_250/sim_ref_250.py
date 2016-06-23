@@ -13,19 +13,19 @@ from scale_functions import *
 MPI_rank = MPI.rank(mpi_comm_world())
 
 # Scale functions for determining winter sliding speed
-input_file = 'inputs_sheet/steady/ref_steady.hdf5'
+input_file = '../inputs_sheet/steady_250/ref_steady_250.hdf5'
 scale_functions = ScaleFunctions(input_file, 5e-3, 5e-3)
 
 prm = NonlinearVariationalSolver.default_parameters()
 prm['newton_solver']['relaxation_parameter'] = 1.0
-prm['newton_solver']['relative_tolerance'] = 1e-6
-prm['newton_solver']['absolute_tolerance'] = 1e-6
+prm['newton_solver']['relative_tolerance'] = 1e-8
+prm['newton_solver']['absolute_tolerance'] = 1e-8
 prm['newton_solver']['error_on_nonconvergence'] = False
 prm['newton_solver']['maximum_iterations'] = 30
 
 model_inputs = {}
 model_inputs['input_file'] = input_file
-model_inputs['out_dir'] = 'paper_results/out_ref_winter/'
+model_inputs['out_dir'] = 'out_ref/'
 model_inputs['constants'] = pcs
 model_inputs['newton_params'] = prm
 
@@ -40,9 +40,9 @@ spm = pcs['spm']
 # Seconds per day
 spd = pcs['spd']
 # End time
-T = 8.0 * spm
+T = 2.0 * spm
 # Time step
-dt = 60.0 * 60.0 * 8.0
+dt = 60.0 * 60.0 * 4.0
 # Iteration count
 i = 0
 
@@ -54,13 +54,15 @@ while model.t < T:
     current_time = model.t / spd
     print ('%sCurrent time: %s %s' % (fg(1), current_time, attr(0)))
   
-  model.step(dt)
+  model.step_maintain(dt)
+  quit() 
+  
   
   if i % 1 == 0:
-    model.write_pvds(['pfo', 'h'])
+    model.write_pvds(['pfo', 'h', 'u_b'])
     
-  if i % 1 == 0:
-    model.checkpoint(['m', 'pfo', 'h', 'u_b', 'k'])
+  #if i % 1 == 0:
+  #  model.checkpoint(['m', 'pfo', 'h', 'u_b', 'k'])
   
   if MPI_rank == 0: 
     print
