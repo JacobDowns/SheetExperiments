@@ -23,8 +23,8 @@ prm['newton_solver']['error_on_nonconvergence'] = False
 prm['newton_solver']['maximum_iterations'] = 30
 
 pcs['k'] = 5e-3
-model_inputs['input_file'] = '../inputs_sheet/inputs_250/inputs_high_250.hdf5'
-model_inputs['out_dir'] = 'out_ref_steady_250/'
+model_inputs['input_file'] = '../inputs_sheet/inputs/inputs_high.hdf5'
+model_inputs['out_dir'] = 'out_ref_steady/'
 model_inputs['constants'] = pcs
 model_inputs['newton_params'] = prm
 
@@ -55,4 +55,4 @@ while model.t < T:
     
   i += 1
   
-model.write_steady_file('out_ref_steady_250/ref_steady_250')
+model.write_steady_file('out_ref_steady/ref_steady')
