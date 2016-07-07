@@ -1,6 +1,6 @@
 """
-IS winter simulation where conductivity remains constant but sliding
-decreases. 
+Winter simulation on a trough bed where conductivity remains constant but sliding
+decreases. Bump height 10cm.
 """
 
 from dolfin import *
@@ -14,14 +14,24 @@ from scale_functions import *
 MPI_rank = MPI.rank(mpi_comm_world())
 
 # Scale functions for determining winter sliding speed
-input_file = '../inputs_sheet/steady_is/ref_steady_is.hdf5'
-scale_functions = ScaleFunctions(input_file, 5e-3, 5e-3, u_b_max = 100.0)
+input_file = '../inputs_sheet/steady/ref_trough_steady_10cm3.hdf5'
+scale_functions = ScaleFunctions(input_file, 3.5e-3, 3.5e-3, u_b_max = 100.0)
+
+prm = NonlinearVariationalSolver.default_parameters()
+prm['newton_solver']['relaxation_parameter'] = 1.0
+prm['newton_solver']['relative_tolerance'] = 1e-7
+prm['newton_solver']['absolute_tolerance'] = 1e-7
+prm['newton_solver']['error_on_nonconvergence'] = False
+prm['newton_solver']['maximum_iterations'] = 30
 
 model_inputs = {}
+pcs['k'] = 3.5e-3
+pcs['h_r'] = 0.1
+pcs['l_r'] = 0.25
 model_inputs['input_file'] = input_file
-model_inputs['out_dir'] = 'out_is_sliding_only/'
+model_inputs['out_dir'] = 'out_trough_sliding_only_hr_10cm3/'
 model_inputs['constants'] = pcs
-model_inputs['opt_params'] = {'tol' : 5e-3, 'scale' : 30}
+model_inputs['newton_params'] = prm
 
 # Create the sheet model
 model = SheetModel(model_inputs)
@@ -36,7 +46,7 @@ spd = pcs['spd']
 # End time
 T = 8.0 * spm
 # Time step
-dt = spd / 3.0
+dt = 60.0 * 60.0 * 4.0
 # Iteration count
 i = 0
 
@@ -44,7 +54,7 @@ while model.t < T:
   # Update the melt
   model.set_m(scale_functions.get_m(model.t))
   # Update the sliding speed
-  model.set_u_b(scale_functions.get_u_b(model.t))  
+  model.set_u_b(project(scale_functions.get_u_b(model.t), model.V_cg))  
   
   if MPI_rank == 0: 
     current_time = model.t / spd

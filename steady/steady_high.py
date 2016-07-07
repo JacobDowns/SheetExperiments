@@ -1,11 +1,12 @@
 """
-IS reference simulation steady state.
+Steady state for flat bed with a spatially varying k. High melt.
 """
 
 from dolfin import *
 from dolfin import MPI, mpi_comm_world
 from sheet_model import *
 from constants import *
+from scale_functions import *
 
 
 ### Model inputs
@@ -14,14 +15,15 @@ from constants import *
 MPI_rank = MPI.rank(mpi_comm_world())
 
 model_inputs = {}
-pcs['k'] = 5e-3
-model_inputs['input_file'] = '../inputs_sheet/inputs_is/inputs_is.hdf5'
-model_inputs['out_dir'] = 'out_is_ref/'
+input_file = '../inputs_sheet/inputs/inputs_high.hdf5'
+scale_functions = ScaleFunctions(input_file, 5e-5, 5e-3, u_b_max = 100.0)
+model_inputs['input_file'] = input_file
+model_inputs['out_dir'] = 'out_steady_high/'
 model_inputs['constants'] = pcs
 
 # Create the sheet model
 model = SheetModel(model_inputs)
-
+model.set_k(scale_functions.get_k(0.0))
 
 ### Run the simulation
 
@@ -30,7 +32,7 @@ spd = pcs['spd']
 # End time
 T = 100.0 * spd
 # Time step
-dt = spd / 3.0
+dt = spd
 # Iteration count
 i = 0
 
@@ -46,4 +48,4 @@ while model.t < T:
     
   i += 1
   
-model.write_steady_file('out_is_ref/ref_steady_is')
+model.write_steady_file('../inputs_sheet/steady/steady_high')

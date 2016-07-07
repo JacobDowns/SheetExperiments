@@ -1,5 +1,5 @@
 """
-Gammut of low melt lag time tests.
+Gammut of low melt lag time tests. Trough bed. Low melt.
 """
 
 from dolfin import *
@@ -13,7 +13,7 @@ MPI_rank = MPI.rank(mpi_comm_world())
 
 ### Load the input file 
 
-input_file = '../inputs_sheet/steady/steady_low.hdf5'
+input_file = '../inputs_sheet/steady/trough_steady_low.hdf5'
 k_min = 5e-5
 k_max = 5e-3
 scale_functions = ScaleFunctions(input_file, k_min, k_max, u_b_max = 100.0)
@@ -91,8 +91,8 @@ i = 0
 for b in lag_times:
   scale_functions.b = b
   name = names[i]
-  model_inputs['out_dir'] = 'out_lag_high/' +  name
-  model_inputs['checkpoint_file'] = 'lag_high_' + name
+  model_inputs['out_dir'] = 'lag_trough_low/' +  name
+  model_inputs['checkpoint_file'] = 'lag_trough_low_' + name
   model = SheetModel(model_inputs)
   run_sim(name)
   i += 1
