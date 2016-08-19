@@ -1,5 +1,5 @@
 """
-Gammut of low melt lag time tests.
+Gammut of low melt lag time tests. Trough bed. Low melt.
 """
 
 from dolfin import *
@@ -13,7 +13,7 @@ MPI_rank = MPI.rank(mpi_comm_world())
 
 ### Load the input file 
 
-input_file = '../inputs_sheet/steady/steady_high.hdf5'
+input_file = '../inputs_sheet/steady/trough_steady_low.hdf5'
 k_min = 5e-5
 k_max = 5e-3
 scale_functions = ScaleFunctions(input_file, k_min, k_max, u_b_max = 100.0)
@@ -35,11 +35,8 @@ model_inputs['constants'] = pcs
 model_inputs['input_file'] = input_file
 model_inputs['newton_params'] = prm
 
-#lag_times = [spd, 7.0 * spd, 30.0 * spd]
-#names = ['day', 'week', 'month']
-
-lag_times = [7.0 * spd, 30.0 * spd]
-names = ['week', 'month']
+lag_times = [spd, 7.0 * spd, 30.0 * spd]
+names = ['day', 'week', 'month']
 
 
 ### Run the simulation
@@ -51,17 +48,17 @@ def run_sim(name):
   # End time
   T = 8.0 * spm
   # Time step
-  dt = 60.0 * 60.0 * 4.0
+  dt = 60.0 * 60.0 * 8.0
   # Iteration count
   i = 0
   
   while model.t < T:  
-    #if name == 'day' and model.t <= 2 * spd:
-    #  dt = 60.0 * 60.0
-    #elif name == 'week' and model.t <= 14.0 * spd:
-    #  dt = 60.0 * 60.0
-    #else :
-     # dt = 60.0 * 60.0 * 8.0
+    if name == 'day' and model.t <= 2 * spd:
+      dt = 60.0 * 60.0
+    elif name == 'week' and model.t <= 14.0 * spd:
+      dt = 60.0 * 60.0
+    else :
+      dt = 60.0 * 60.0 * 8.0
       
     # Update the melt
     model.set_m(scale_functions.get_m(model.t))
@@ -94,8 +91,8 @@ i = 0
 for b in lag_times:
   scale_functions.b = b
   name = names[i]
-  model_inputs['out_dir'] = 'out_lag_high/' +  name
-  model_inputs['checkpoint_file'] = 'lag_high_' + name
+  model_inputs['out_dir'] = 'lag_trough_low/' +  name
+  model_inputs['checkpoint_file'] = 'lag_trough_low_' + name
   model = SheetModel(model_inputs)
   run_sim(name)
   i += 1

@@ -25,6 +25,9 @@ model_inputs['constants'] = pcs
 model = SheetModel(model_inputs)
 model.set_k(scale_functions.get_k(0.0))
 
+plot(model.m * pcs['spy'], interactive = True)
+quit()
+
 
 ### Run the simulation
 

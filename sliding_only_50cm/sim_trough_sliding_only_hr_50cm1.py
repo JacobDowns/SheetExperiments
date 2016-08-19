@@ -63,7 +63,7 @@ while model.t < T:
   model.step(dt)
   
   if i % 1 == 0:
-    model.write_pvds(['pfo', 'h'])
+    model.write_pvds(['pfo', 'h', 'u_b'])
     
   if i % 1 == 0:
     model.checkpoint(['m', 'pfo', 'h', 'u_b', 'k'])
